@@ -17,8 +17,8 @@ A modern, responsive Flutter application for managing fitness plans with timer f
 
 Before running this project, make sure you have:
 
-- **Flutter SDK** (3.0.0 or higher)
-- **Dart SDK** (3.0.0 or higher)
+- **Flutter SDK** (3.8.1 or higher)
+- **Dart SDK** (3.8.1 or higher)
 - **Android Studio** or **VS Code** with Flutter extensions
 - **Android Emulator** or **iOS Simulator** (for mobile testing)
 - **Chrome** (for web testing)
@@ -66,18 +66,63 @@ flutter run -d linux    # Linux
 flutter test
 ```
 
+### 5. Generate App Icons (Optional)
+
+```bash
+flutter pub run flutter_launcher_icons:main
+```
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+#### Flutter Doctor Issues
+
+```bash
+flutter doctor
+```
+
+Run this command to check for any setup issues and follow the suggested fixes.
+
+#### Dependency Issues
+
+```bash
+flutter clean
+flutter pub get
+```
+
+#### Build Issues
+
+```bash
+flutter clean
+flutter pub get
+flutter pub run flutter_launcher_icons:main
+flutter run
+```
+
+#### Web CORS Issues
+
+If you encounter CORS issues when running on web, use:
+
+```bash
+flutter run -d chrome --web-renderer html
+```
+
 ## 📦 Dependencies
 
 ### Core Dependencies
 
 - **flutter**: SDK for building the app
-- **provider**: ^6.1.2 - State management solution
-- **dio**: ^5.4.0 - HTTP client for API calls
+- **provider**: ^6.1.5+1 - State management solution
+- **dio**: ^5.9.0 - HTTP client for API calls
+- **intl**: ^0.20.2 - Internationalization and date formatting
+- **cupertino_icons**: ^1.0.8 - iOS-style icons
 
 ### Development Dependencies
 
 - **flutter_test**: Testing framework
-- **flutter_lints**: Linting rules for code quality
+- **flutter_lints**: ^5.0.0 - Linting rules for code quality
+- **flutter_launcher_icons**: ^0.13.1 - App icon generation
 
 ### Key Features Implemented
 
@@ -101,9 +146,16 @@ lib/
 │   └── models/                 # Data models (Plan, DayPlans)
 ├── ui/
 │   ├── screens/                # App screens
+│   │   ├── splash_screen.dart
 │   │   ├── plans_list_screen.dart
 │   │   ├── plan_editor_screen.dart
-│   │   └── plan_detail_screen.dart
+│   │   ├── plan_detail_screen.dart
+│   │   ├── workouts_screen.dart
+│   │   ├── progress_screen.dart
+│   │   └── profile_screen.dart
+│   ├── navigation/             # Navigation components
+│   │   ├── main_navigation.dart
+│   │   └── bottom_nav_item.dart
 │   └── widgets/                # Reusable UI components
 │       ├── plan_card.dart
 │       ├── animated_card.dart
@@ -139,6 +191,38 @@ lib/
 - **Clean Code**: Followed Flutter best practices and naming conventions
 - **Comprehensive Testing**: Wrote widget tests for critical user flows
 - **Error Handling**: Implemented robust error handling with user-friendly messages
+
+## 📱 App Screens & Navigation
+
+The app features a modern bottom navigation system with the following main screens:
+
+### 🏠 Home Screen (Plans List)
+
+- **Daily Challenge Banner**: Motivational fitness challenges
+- **Week Calendar**: Interactive calendar for date selection
+- **Plan Management**: View, create, and manage fitness plans
+- **Real-time Timers**: Countdown timers for upcoming sessions
+
+### 🏋️ Workouts Screen
+
+- Dedicated workout tracking interface
+- Exercise routines and progress monitoring
+
+### 📊 Progress Screen
+
+- Fitness progress visualization
+- Achievement tracking and statistics
+
+### 👤 Profile Screen
+
+- User profile management
+- Settings and preferences
+
+### ✨ Splash Screen
+
+- Beautiful animated introduction with particle effects
+- Warm earth-tone gradient background
+- Smooth transition to main app
 
 ## 🔧 Technical Implementation Details
 
