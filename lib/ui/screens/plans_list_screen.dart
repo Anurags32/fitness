@@ -161,15 +161,10 @@ class PlansListScreen extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 100),
         physics: const BouncingScrollPhysics(),
         children: [
-          // 1. Daily Challenge
           _buildDailyChallengeBanner(context),
           const SizedBox(height: 20),
-
-          // 2. Week Calendar
           Center(child: _buildWeekCalendar(context, vm)),
           const SizedBox(height: 20),
-
-          // 3. Your Plans (empty ya list)
           _buildYourPlanSection(context, day, vm),
         ],
       ),

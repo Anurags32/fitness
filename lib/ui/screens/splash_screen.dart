@@ -35,25 +35,19 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   void _setupAnimations() {
-    // Main animation controller
+    
     _mainController = AnimationController(
       duration: const Duration(milliseconds: 3000),
       vsync: this,
     );
-
-    // Particle animation controller
     _particleController = AnimationController(
       duration: const Duration(milliseconds: 4000),
       vsync: this,
     )..repeat();
-
-    // Pulse animation controller
     _pulseController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     )..repeat(reverse: true);
-
-    // Logo animations
     _logoScaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _mainController,
@@ -67,8 +61,6 @@ class _SplashScreenState extends State<SplashScreen>
         curve: const Interval(0.0, 0.3, curve: Curves.easeIn),
       ),
     );
-
-    // Title animations
     _titleSlideAnimation = Tween<double>(begin: 50.0, end: 0.0).animate(
       CurvedAnimation(
         parent: _mainController,
@@ -82,30 +74,22 @@ class _SplashScreenState extends State<SplashScreen>
         curve: const Interval(0.3, 0.6, curve: Curves.easeIn),
       ),
     );
-
-    // Subtitle animation
     _subtitleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _mainController,
         curve: const Interval(0.5, 0.8, curve: Curves.easeIn),
       ),
     );
-
-    // Progress animation
     _progressAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _mainController,
         curve: const Interval(0.7, 1.0, curve: Curves.easeInOut),
       ),
     );
-
-    // Particle animation
     _particleAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
     ).animate(_particleController);
-
-    // Pulse animation
     _pulseAnimation = Tween<double>(
       begin: 1.0,
       end: 1.1,
@@ -113,10 +97,7 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   void _startAnimationSequence() async {
-    // Start all animations
     _mainController.forward();
-
-    // Navigate to main screen after animations complete
     await Future.delayed(const Duration(milliseconds: 4500));
     if (mounted) {
       Navigator.of(context).pushReplacementNamed(MainNavigation.route);

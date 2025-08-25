@@ -61,7 +61,6 @@ class ApiService {
         print('✅ Successfully fetched plans');
       }
 
-      // Handle both direct data and wrapped response
       if (res.data is Map<String, dynamic>) {
         return Map<String, dynamic>.from(res.data);
       } else {
