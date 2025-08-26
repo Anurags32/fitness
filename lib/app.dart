@@ -26,7 +26,7 @@ class FitnessApp extends StatelessWidget {
         MainNavigation.route: (_) => const MainNavigation(),
         PlansListScreen.route: (_) => const PlansListScreen(),
         WorkoutsScreen.route: (_) => const WorkoutsScreen(),
-        ProgressScreen.route: (_) => const ProgressScreen(),
+        SeatBookingScreen.route: (_) => const SeatBookingScreen(),
         ProfileScreen.route: (_) => const ProfileScreen(),
         PlanEditorScreen.route: (_) => const PlanEditorScreen(),
       },

@@ -1,407 +1,279 @@
 import 'package:flutter/material.dart';
-import '../../core/utils/responsive.dart';
-import '../widgets/animated_card.dart';
 
-class ProgressScreen extends StatelessWidget {
-  static const route = '/progress';
+class SeatBookingScreen extends StatefulWidget {
+  static const route = '/seat-booking';
 
-  const ProgressScreen({super.key});
+  const SeatBookingScreen({super.key});
+
+  @override
+  State<SeatBookingScreen> createState() => _SeatBookingScreenState();
+}
+
+class _SeatBookingScreenState extends State<SeatBookingScreen> {
+  Set<int> selectedSeats = {}; // Initially no seats selected
+  Set<int> reservedSeats = {6, 7, 18, 22}; // Example reserved seats
+
+  void _showBottomCard(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.35,
+          minChildSize: 0.2,
+          maxChildSize: 0.6,
+          builder: (_, controller) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.black87,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+              ),
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    alignment: Alignment.center,
+                    margin: const EdgeInsets.only(bottom: 12),
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.white24,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const Text(
+                    "Cinema Max",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      _bottomInfo("08.04", "Date"),
+                      _bottomInfo("21:55", "Hour"),
+                      _bottomInfo(
+                        selectedSeats.join(", "),
+                        "Seats",
+                      ), // Show seats
+                      _bottomInfo("2,5", "Row"),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      const Text(
+                        "\$35,50",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 30,
+                          vertical: 14,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF9C88FF),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        child: const Text(
+                          "Buy",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _bottomInfo(String value, String label) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: const TextStyle(color: Colors.white70, fontSize: 12),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          _buildSliverAppBar(context),
-          SliverPadding(
-            padding: context.responsivePadding,
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                _buildStatsOverview(context),
-                const SizedBox(height: 24),
-                _buildWeeklyProgress(context),
-                const SizedBox(height: 24),
-                _buildAchievements(context),
-                const SizedBox(height: 24),
-                _buildGoals(context),
-                const SizedBox(height: 100),
-              ]),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSliverAppBar(BuildContext context) {
-    return SliverAppBar(
-      expandedHeight: 200,
-      pinned: true,
-      backgroundColor: Theme.of(context).colorScheme.secondary,
-      flexibleSpace: FlexibleSpaceBar(
-        title: const Text(
-          'Progress',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-        ),
-        background: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Theme.of(context).colorScheme.secondary,
-                Theme.of(context).colorScheme.tertiary,
-              ],
-            ),
-          ),
-          child: Center(
-            child: Image.asset(
-              'assets/logo.png',
-              width: 80,
-              height: 80,
-              fit: BoxFit.contain,
-              color: Colors.white54,
-              colorBlendMode: BlendMode.modulate,
-              errorBuilder: (context, error, stackTrace) {
-                return const Icon(
-                  Icons.trending_up,
-                  size: 80,
-                  color: Colors.white54,
-                );
-              },
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatsOverview(BuildContext context) {
-    final stats = [
-      {
-        'label': 'Workouts',
-        'value': '24',
-        'icon': Icons.fitness_center,
-        'color': Colors.blue,
-      },
-      {
-        'label': 'Hours',
-        'value': '36',
-        'icon': Icons.access_time,
-        'color': Colors.green,
-      },
-      {
-        'label': 'Calories',
-        'value': '2.4k',
-        'icon': Icons.local_fire_department,
-        'color': Colors.orange,
-      },
-      {
-        'label': 'Streak',
-        'value': '7',
-        'icon': Icons.flash_on,
-        'color': Colors.purple,
-      },
-    ];
-
-    return AnimatedCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'This Month',
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: context.responsive(
-                mobile: 2,
-                tablet: 4,
-                desktop: 4,
-              ),
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 1.1,
-            ),
-            itemCount: stats.length,
-            itemBuilder: (context, index) {
-              final stat = stats[index];
-              return Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: (stat['color'] as Color).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: (stat['color'] as Color).withOpacity(0.3),
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      stat['icon'] as IconData,
-                      size: 32,
-                      color: stat['color'] as Color,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      stat['value'] as String,
-                      style: Theme.of(context).textTheme.headlineSmall
-                          ?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: stat['color'] as Color,
-                          ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      stat['label'] as String,
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildWeeklyProgress(BuildContext context) {
-    return AnimatedCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Weekly Progress',
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          Container(
-            height: 200,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceVariant,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.bar_chart, size: 64, color: Colors.grey[400]),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Progress Chart',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.titleMedium?.copyWith(color: Colors.grey[600]),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Coming Soon',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyMedium?.copyWith(color: Colors.grey[500]),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAchievements(BuildContext context) {
-    final achievements = [
-      {
-        'title': 'First Workout',
-        'description': 'Complete your first workout',
-        'earned': true,
-      },
-      {
-        'title': 'Week Warrior',
-        'description': 'Workout 7 days in a row',
-        'earned': true,
-      },
-      {
-        'title': 'Month Master',
-        'description': 'Complete 30 workouts',
-        'earned': false,
-      },
-      {
-        'title': 'Consistency King',
-        'description': 'Workout 30 days in a row',
-        'earned': false,
-      },
-    ];
-
-    return AnimatedCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Achievements',
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          ...achievements.map((achievement) {
-            final earned = achievement['earned'] as bool;
-            return Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: earned
-                    ? Theme.of(context).colorScheme.primaryContainer
-                    : Theme.of(context).colorScheme.surfaceVariant,
-                borderRadius: BorderRadius.circular(12),
-                border: earned
-                    ? Border.all(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.primary.withOpacity(0.3),
-                      )
-                    : null,
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: earned
-                          ? Theme.of(context).colorScheme.primary
-                          : Colors.grey[400],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      earned ? Icons.emoji_events : Icons.lock_outline,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          achievement['title'] as String,
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: earned ? null : Colors.grey[600],
-                              ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          achievement['description'] as String,
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                color: earned ? null : Colors.grey[500],
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (earned)
-                    Icon(
-                      Icons.check_circle,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                ],
-              ),
-            );
-          }).toList(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildGoals(BuildContext context) {
-    return AnimatedCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Monthly Goals',
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          _buildGoalItem(context, 'Workouts', 24, 30, Icons.fitness_center),
-          const SizedBox(height: 12),
-          _buildGoalItem(context, 'Hours', 36, 50, Icons.access_time),
-          const SizedBox(height: 12),
-          _buildGoalItem(
-            context,
-            'Calories',
-            2400,
-            3000,
-            Icons.local_fire_department,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildGoalItem(
-    BuildContext context,
-    String label,
-    int current,
-    int target,
-    IconData icon,
-  ) {
-    final progress = current / target;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      backgroundColor: const Color(0xFFF5F5DC), // Beige background
+      body: SafeArea(
+        child: Column(
           children: [
-            Row(
-              children: [
-                Icon(
-                  icon,
-                  size: 20,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  label,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            Text(
-              '$current / $target',
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
-            ),
+            _buildHeader(),
+            _buildTitle(),
+            _buildSeatsLayout(),
+            _buildLegend(),
+            const SizedBox(height: 10),
           ],
         ),
-        const SizedBox(height: 8),
-        LinearProgressIndicator(
-          value: progress,
-          backgroundColor: Colors.grey[300],
-          valueColor: AlwaysStoppedAnimation<Color>(
-            Theme.of(context).colorScheme.primary,
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          const CircleAvatar(
+            backgroundImage: NetworkImage(
+              "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg",
+            ),
+            radius: 20,
           ),
+          const SizedBox(width: 12),
+          const Text(
+            "Anurag",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          ),
+          const Spacer(),
+          const Icon(Icons.search, size: 24, color: Colors.black87),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTitle() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        children: [
+          const Icon(Icons.arrow_back, color: Colors.black87),
+          const SizedBox(width: 16),
+          const Text(
+            "Choose Seats",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSeatsLayout() {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Row(
+        children: [
+          Expanded(child: _buildSeatGrid(0, 24)), // Left side
+          // const SizedBox(width: 20),
+          Expanded(child: _buildSeatGrid(24, 48)), // Right side
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSeatGrid(int start, int end) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 4,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+      ),
+      itemCount: end - start,
+      itemBuilder: (context, index) {
+        int seat = start + index;
+        return _buildSeat(seat);
+      },
+    );
+  }
+
+  Widget _buildSeat(int seat) {
+    bool isSelected = selectedSeats.contains(seat);
+    bool isReserved = reservedSeats.contains(seat);
+
+    Color color;
+    if (isSelected) {
+      color = const Color(0xFF9C88FF); // Purple
+    } else if (isReserved) {
+      color = Colors.black; // Reserved
+    } else {
+      color = const Color(0xFFD3D3D3); // Available
+    }
+
+    return GestureDetector(
+      onTap: () {
+        if (!isReserved) {
+          setState(() {
+            if (isSelected) {
+              selectedSeats.remove(seat);
+            } else {
+              selectedSeats.add(seat);
+            }
+          });
+          _showBottomCard(context); // <-- Show bottom sheet on tap
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+      ),
+    );
+  }
+
+  Widget _buildLegend() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _legendDot(const Color(0xFF9C88FF), "Selected"),
+          _legendDot(Colors.black, "Reserved"),
+          _legendDot(const Color(0xFFD3D3D3), "Available"),
+        ],
+      ),
+    );
+  }
+
+  Widget _legendDot(Color color, String label) {
+    return Row(
+      children: [
+        Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 6),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
         ),
       ],
     );

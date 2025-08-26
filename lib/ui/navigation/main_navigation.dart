@@ -25,7 +25,7 @@ class _MainNavigationState extends State<MainNavigation>
   final List<Widget> _screens = [
     const PlansListScreen(),
     const WorkoutsScreen(),
-    const ProgressScreen(),
+    const SeatBookingScreen(),
     const ProfileScreen(),
   ];
 
