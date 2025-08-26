@@ -94,26 +94,28 @@ class _MainNavigationState extends State<MainNavigation>
         return Transform.translate(
           offset: Offset(0, 100 * (1 - _animation.value)),
           child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 20,
-                  offset: const Offset(0, -5),
-                ),
-              ],
-            ),
+            color: Theme.of(context).scaffoldBackgroundColor,
             child: SafeArea(
               child: Container(
                 height: context.responsive(mobile: 70, tablet: 80, desktop: 90),
-                padding: EdgeInsets.symmetric(
+                margin: EdgeInsets.symmetric(
                   horizontal: context.responsive(
                     mobile: 16,
                     tablet: 24,
                     desktop: 32,
                   ),
                   vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(35),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      blurRadius: 20,
+                      offset: const Offset(0, -5),
+                    ),
+                  ],
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -148,9 +150,7 @@ class _MainNavigationState extends State<MainNavigation>
           vertical: 8,
         ),
         decoration: BoxDecoration(
-          color: isSelected
-              ? Theme.of(context).colorScheme.primaryContainer
-              : Colors.transparent,
+          color: isSelected ? Colors.white : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
@@ -161,9 +161,7 @@ class _MainNavigationState extends State<MainNavigation>
               child: Icon(
                 isSelected ? tab.activeIcon : tab.icon,
                 key: ValueKey(isSelected),
-                color: isSelected
-                    ? Theme.of(context).colorScheme.primary
-                    : Colors.grey[600],
+                color: isSelected ? Colors.black : Colors.white,
                 size: context.responsive(mobile: 24, tablet: 26, desktop: 28),
               ),
             ),
@@ -175,7 +173,7 @@ class _MainNavigationState extends State<MainNavigation>
                       child: Text(
                         tab.label,
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: Colors.black,
                           fontWeight: FontWeight.w600,
                           fontSize: context.responsive(
                             mobile: 12,

@@ -40,18 +40,20 @@ class PlansListScreen extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          await Navigator.pushNamed(context, PlanEditorScreen.route);
-        },
-        label: const Text(
-          'Add Plan',
-          style: TextStyle(fontWeight: FontWeight.w600),
-        ),
-        icon: const Icon(Icons.add),
-        backgroundColor: const Color(0xFFD1913C),
-        foregroundColor: Colors.white,
-      ),
+      floatingActionButton: vm.day != null && vm.day!.plans.length >= 2
+          ? null // FAB hata do jab 2 plans ho gaye
+          : FloatingActionButton.extended(
+              onPressed: () async {
+                await Navigator.pushNamed(context, PlanEditorScreen.route);
+              },
+              label: const Text(
+                'Add Plan',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              icon: const Icon(Icons.add),
+              backgroundColor: const Color(0xFFD1913C),
+              foregroundColor: Colors.white,
+            ),
     );
   }
 
@@ -86,7 +88,7 @@ class PlansListScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Hello, Anurag',
+                  'Hello, Sandra',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -158,13 +160,15 @@ class PlansListScreen extends StatelessWidget {
     return RefreshIndicator(
       onRefresh: () => vm.loadForDate(vm.selectedDate),
       child: ListView(
-        padding: const EdgeInsets.only(bottom: 100),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).padding.bottom + 20,
+        ),
         physics: const BouncingScrollPhysics(),
         children: [
           _buildDailyChallengeBanner(context),
-          const SizedBox(height: 20),
+          const SizedBox(height: 30),
           Center(child: _buildWeekCalendar(context, vm)),
-          const SizedBox(height: 20),
+          const SizedBox(height: 30),
           _buildYourPlanSection(context, day, vm),
         ],
       ),
@@ -286,15 +290,15 @@ class PlansListScreen extends StatelessWidget {
 
     return SizedBox(
       width: 80,
-      height: 30,
+      height: 80,
       child: Stack(
         children: avatars.asMap().entries.map((entry) {
           int index = entry.key;
           return Positioned(
             left: index * 20.0,
             child: Container(
-              width: 30,
-              height: 30,
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(color: Colors.white, width: 2),
@@ -327,8 +331,8 @@ class PlansListScreen extends StatelessWidget {
           return GestureDetector(
             onTap: () => vm.setDate(date),
             child: Container(
-              width: 45,
-              height: 70,
+              width: 55,
+              height: 100,
               decoration: BoxDecoration(
                 color: isSelected ? Colors.black : Colors.white,
                 borderRadius: BorderRadius.circular(25),
@@ -445,12 +449,313 @@ class PlansListScreen extends StatelessWidget {
             ),
           ),
         ),
-        ...day.plans.asMap().entries.map((entry) {
-          final index = entry.key;
-          final plan = entry.value;
-          return _buildModernPlanCard(context, plan, index);
-        }).toList(),
+        // Special layout for 2 plans
+        if (day.plans.length == 2)
+          _buildTwoPlanLayout(context, day.plans)
+        else
+          // Default layout for other cases
+          ...day.plans.asMap().entries.map((entry) {
+            final index = entry.key;
+            final plan = entry.value;
+            return _buildModernPlanCard(context, plan, index);
+          }).toList(),
       ],
+    );
+  }
+
+  Widget _buildTwoPlanLayout(BuildContext context, List plans) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // First plan - larger card
+              Expanded(flex: 3, child: _buildLargePlanCard(context, plans[0])),
+              const SizedBox(width: 16),
+              // Second plan and social media section
+              Expanded(
+                flex: 2,
+                child: Column(
+                  children: [
+                    _buildSmallPlanCard(context, plans[1]),
+                    const SizedBox(height: 16),
+                    _buildSocialMediaSection(context),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20), // Extra spacing at the bottom
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLargePlanCard(BuildContext context, plan) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PlanDetailScreen(plan: plan)),
+        );
+      },
+      child: Container(
+        height: 320,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFFFFB347), Color(0xFFFF8C42)], // Orange gradient
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFFFB347).withValues(alpha: 0.3),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Level badge
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  plan.level,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              const Spacer(),
+              // Plan title
+              Text(
+                plan.title,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 8),
+              // Date
+              Text(
+                _formatDate(DateTime.now()),
+                style: const TextStyle(fontSize: 14, color: Colors.white70),
+              ),
+              const SizedBox(height: 4),
+              // Time and room
+              Text(
+                '${plan.time}',
+                style: const TextStyle(fontSize: 14, color: Colors.white70),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '${plan.room} room',
+                style: const TextStyle(fontSize: 14, color: Colors.white70),
+              ),
+              const SizedBox(height: 12),
+              const Spacer(),
+              Row(
+                children: [
+                  Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withValues(alpha: 0.2),
+                    ),
+                    child: const Icon(
+                      Icons.person,
+                      size: 14,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Trainer',
+                    style: const TextStyle(fontSize: 12, color: Colors.white70),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    plan.trainer,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSmallPlanCard(BuildContext context, plan) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PlanDetailScreen(plan: plan)),
+        );
+      },
+      child: Container(
+        height: 200,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF87CEEB), Color(0xFF4FC3F7)], // Blue gradient
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF87CEEB).withValues(alpha: 0.3),
+              blurRadius: 15,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Level badge
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      plan.level,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  // Plan title
+                  Text(
+                    plan.title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  // Date
+                  Text(
+                    _formatDate(DateTime.now()),
+                    style: const TextStyle(fontSize: 12, color: Colors.white70),
+                  ),
+                  const SizedBox(height: 2),
+                  // Time and room
+                  Text(
+                    '${plan.time}',
+                    style: const TextStyle(fontSize: 12, color: Colors.white70),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '${plan.room} room',
+                    style: const TextStyle(fontSize: 12, color: Colors.white70),
+                  ),
+                ],
+              ),
+            ),
+            // 3D decoration
+            Positioned(
+              right: -15,
+              top: -15,
+              child: Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.1),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSocialMediaSection(BuildContext context) {
+    return Container(
+      height: 108,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFDDA0DD), Color(0xFFBA68C8)], // Purple gradient
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFDDA0DD).withValues(alpha: 0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildSocialIcon(Icons.camera_alt, () {
+            // Instagram action
+          }),
+          _buildSocialIcon(Icons.play_circle_fill, () {
+            // YouTube action
+          }),
+          _buildSocialIcon(Icons.alternate_email, () {
+            // Twitter action
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSocialIcon(IconData icon, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.2),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, color: Colors.white, size: 18),
+      ),
     );
   }
 
