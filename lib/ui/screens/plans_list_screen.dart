@@ -41,7 +41,7 @@ class PlansListScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: vm.day != null && vm.day!.plans.length >= 2
-          ? null // FAB hata do jab 2 plans ho gaye
+          ? null
           : FloatingActionButton.extended(
               onPressed: () async {
                 await Navigator.pushNamed(context, PlanEditorScreen.route);
@@ -62,7 +62,6 @@ class PlansListScreen extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       child: Row(
         children: [
-          // User Avatar
           Container(
             width: 50,
             height: 50,
@@ -82,7 +81,6 @@ class PlansListScreen extends StatelessWidget {
             child: const Icon(Icons.person, color: Colors.white, size: 24),
           ),
           const SizedBox(width: 16),
-          // Greeting
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,7 +100,6 @@ class PlansListScreen extends StatelessWidget {
               ],
             ),
           ),
-          // Search Icon
           Container(
             width: 40,
             height: 40,
@@ -243,7 +240,6 @@ class PlansListScreen extends StatelessWidget {
               ],
             ),
           ),
-          // Image
           Container(
             width: 120,
             height: 100,
@@ -449,11 +445,10 @@ class PlansListScreen extends StatelessWidget {
             ),
           ),
         ),
-        // Special layout for 2 plans
+
         if (day.plans.length == 2)
           _buildTwoPlanLayout(context, day.plans)
         else
-          // Default layout for other cases
           ...day.plans.asMap().entries.map((entry) {
             final index = entry.key;
             final plan = entry.value;
@@ -471,10 +466,8 @@ class PlansListScreen extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // First plan - larger card
               Expanded(flex: 3, child: _buildLargePlanCard(context, plans[0])),
               const SizedBox(width: 16),
-              // Second plan and social media section
               Expanded(
                 flex: 2,
                 child: Column(
@@ -487,7 +480,7 @@ class PlansListScreen extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 20), // Extra spacing at the bottom
+          const SizedBox(height: 20),
         ],
       ),
     );
@@ -507,7 +500,7 @@ class PlansListScreen extends StatelessWidget {
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFFFFB347), Color(0xFFFF8C42)], // Orange gradient
+            colors: [Color(0xFFFFB347), Color(0xFFFF8C42)],
           ),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
@@ -523,7 +516,6 @@ class PlansListScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Level badge
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
@@ -543,7 +535,6 @@ class PlansListScreen extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              // Plan title
               Text(
                 plan.title,
                 style: const TextStyle(
@@ -553,13 +544,11 @@ class PlansListScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              // Date
               Text(
                 _formatDate(DateTime.now()),
                 style: const TextStyle(fontSize: 14, color: Colors.white70),
               ),
               const SizedBox(height: 4),
-              // Time and room
               Text(
                 '${plan.time}',
                 style: const TextStyle(fontSize: 14, color: Colors.white70),
@@ -623,7 +612,7 @@ class PlansListScreen extends StatelessWidget {
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFF87CEEB), Color(0xFF4FC3F7)], // Blue gradient
+            colors: [Color(0xFF87CEEB), Color(0xFF4FC3F7)],
           ),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
@@ -641,7 +630,6 @@ class PlansListScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Level badge
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10,
@@ -661,7 +649,6 @@ class PlansListScreen extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
-                  // Plan title
                   Text(
                     plan.title,
                     style: const TextStyle(
@@ -671,13 +658,11 @@ class PlansListScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  // Date
                   Text(
                     _formatDate(DateTime.now()),
                     style: const TextStyle(fontSize: 12, color: Colors.white70),
                   ),
                   const SizedBox(height: 2),
-                  // Time and room
                   Text(
                     '${plan.time}',
                     style: const TextStyle(fontSize: 12, color: Colors.white70),
@@ -690,7 +675,6 @@ class PlansListScreen extends StatelessWidget {
                 ],
               ),
             ),
-            // 3D decoration
             Positioned(
               right: -15,
               top: -15,
@@ -716,7 +700,7 @@ class PlansListScreen extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFFDDA0DD), Color(0xFFBA68C8)], // Purple gradient
+          colors: [Color(0xFFDDA0DD), Color(0xFFBA68C8)],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
@@ -730,15 +714,9 @@ class PlansListScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildSocialIcon(Icons.camera_alt, () {
-            // Instagram action
-          }),
-          _buildSocialIcon(Icons.play_circle_fill, () {
-            // YouTube action
-          }),
-          _buildSocialIcon(Icons.alternate_email, () {
-            // Twitter action
-          }),
+          _buildSocialIcon(Icons.camera_alt, () {}),
+          _buildSocialIcon(Icons.play_circle_fill, () {}),
+          _buildSocialIcon(Icons.alternate_email, () {}),
         ],
       ),
     );
@@ -761,14 +739,14 @@ class PlansListScreen extends StatelessWidget {
 
   Widget _buildModernPlanCard(BuildContext context, plan, int index) {
     final colors = [
-      [const Color(0xFFFFB347), const Color(0xFFFF8C42)], // Orange
-      [const Color(0xFF87CEEB), const Color(0xFF4FC3F7)], // Blue
-      [const Color(0xFFDDA0DD), const Color(0xFFBA68C8)], // Purple
-      [const Color(0xFF98FB98), const Color(0xFF66BB6A)], // Green
+      [const Color(0xFFFFB347), const Color(0xFFFF8C42)],
+      [const Color(0xFF87CEEB), const Color(0xFF4FC3F7)],
+      [const Color(0xFFDDA0DD), const Color(0xFFBA68C8)],
+      [const Color(0xFF98FB98), const Color(0xFF66BB6A)],
     ];
 
     final cardColors = colors[index % colors.length];
-    final isLargeCard = index == 0; // First card is larger
+    final isLargeCard = index == 0;
 
     return GestureDetector(
       onTap: () {
@@ -801,13 +779,11 @@ class PlansListScreen extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            // Content
             Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Level badge
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -827,7 +803,6 @@ class PlansListScreen extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
-                  // Plan title
                   Text(
                     plan.title,
                     style: const TextStyle(
@@ -837,20 +812,17 @@ class PlansListScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  // Date and time
                   Text(
                     _formatDate(DateTime.now()),
                     style: const TextStyle(fontSize: 14, color: Colors.white70),
                   ),
                   const SizedBox(height: 4),
-                  // Time and room
                   Text(
                     '${plan.time} • ${plan.room} room',
                     style: const TextStyle(fontSize: 14, color: Colors.white70),
                   ),
                   if (isLargeCard) ...[
                     const SizedBox(height: 12),
-                    // Trainer info
                     Row(
                       children: [
                         Container(
@@ -880,7 +852,6 @@ class PlansListScreen extends StatelessWidget {
                 ],
               ),
             ),
-            // 3D decoration for large card
             if (isLargeCard)
               Positioned(
                 right: -20,
